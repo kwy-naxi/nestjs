@@ -4,6 +4,7 @@ import { FindOneOptions } from "typeorm";
 import { UserDTO } from "./dto/user.dto";
 import { UserRepository } from "./user.repository";
 import * as bcrypt from 'bcrypt';
+import { User } from "./entity/user.entity";
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,7 @@ export class UserService {
         private userRepository: UserRepository
     ){}
 
-    async findByFields(options: FindOneOptions<UserDTO>): Promise<UserDTO | undefined> {
+    async findByFields(options: FindOneOptions<UserDTO>): Promise<User | undefined> {
         return await this.userRepository.findOne(options);
     }
 
@@ -21,10 +22,11 @@ export class UserService {
         console.log(userDTO);
         return await this.userRepository.save(userDTO);
     }
-   async transformPassword(user: UserDTO) : Promise<void>{
-       user.password = await bcrypt.hash(
-           user.password, 10,
-       );
-       return Promise.resolve();
-   }
+
+    async transformPassword(user: UserDTO): Promise<void> {
+        user.password = await bcrypt.hash(
+            user.password, 10,
+        );
+        return Promise.resolve();
+    }
 }
